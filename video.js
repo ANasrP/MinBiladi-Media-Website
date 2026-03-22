@@ -1,4 +1,4 @@
-/* Mo's Media - video.js */
+/* MinBiladi - video.js */
 document.addEventListener('DOMContentLoaded', function() {
 
   var params  = new URLSearchParams(window.location.search);
@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', function() {
   var splashThumb = document.getElementById('splashThumb');
   var ytWrap      = document.getElementById('ytWrap');
   var vTitle      = document.getElementById('vTitle');
+  var vDesc       = document.getElementById('vDesc');
+  var directorName= document.getElementById('directorName');
   var btnYT       = document.getElementById('btnYT');
   var btnLike     = document.getElementById('btnLike');
   var likeNum     = document.getElementById('likeNum');
@@ -17,20 +19,14 @@ document.addEventListener('DOMContentLoaded', function() {
   var btnSave     = document.getElementById('btnSave');
   var btnFollow   = document.getElementById('btnFollow');
   var soCopy      = document.getElementById('soCopy');
-  var liked = false, saved = false, following = false;
 
-  var videos = {
-    'k4cwKIw6Rtw': { title: 'Mustafah Abdulaziz: Water' },
-    'RiySkOdQESU': { title: "Mo's Media Film" },
-    'W1g76TmHDBg': { title: "Mo's Media Film" },
-    'pEf3VdtrotA': { title: "Mo's Media Film" }
-  };
-  var info = videos[videoId] || { title: "Mo's Media Film" };
+  var liked = false, saved = false, following = false;
 
   var YT_THUMB = 'https://img.youtube.com/vi/';
   var YT_EMBED = 'https://www.youtube.com/embed/';
   var YT_WATCH = 'https://www.youtube.com/watch?v=';
 
+  /* ── Set thumbnail ── */
   if (splashThumb) {
     splashThumb.src = YT_THUMB + videoId + '/maxresdefault.jpg';
     splashThumb.onerror = function() {
@@ -38,27 +34,71 @@ document.addEventListener('DOMContentLoaded', function() {
     };
   }
 
-  if (vTitle) vTitle.textContent = info.title;
-  if (btnYT)  btnYT.href = YT_WATCH + videoId;
-  document.title = info.title + " - Mo's Media";
+  /* ── Set YouTube link ── */
+  if (btnYT) btnYT.href = YT_WATCH + videoId;
 
+  /* ════════════════════════════════════════
+     Fetch real title + author from noembed
+     Works from any https:// origin (GitHub Pages)
+  ════════════════════════════════════════ */
+  var oembedURL = 'https://noembed.com/embed?url=' + encodeURIComponent(YT_WATCH + videoId);
+
+  fetch(oembedURL)
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      var title  = data.title        || 'MinBiladi Film';
+      var author = data.author_name  || 'MinBiladi';
+
+      /* Page title */
+      document.title = title + ' - MinBiladi';
+
+      /* Video title heading */
+      if (vTitle) vTitle.textContent = title;
+
+      /* Director / channel name */
+      if (directorName) directorName.textContent = author;
+
+      /* Description — use title as basis since YT oEmbed has no description */
+      if (vDesc) {
+        vDesc.textContent = '"' + title + '" is een film gepubliceerd door ' + author + ' via MinBiladi — jouw bestemming voor inspirerende en onafhankelijke cinema.';
+      }
+
+      /* Update all related card titles that match this videoId */
+      var relatedLinks = document.querySelectorAll('a[href*="v=' + videoId + '"] .rcard-title');
+      relatedLinks.forEach(function(el) {
+        el.textContent = title;
+      });
+    })
+    .catch(function() {
+      /* Fallback if fetch fails */
+      if (vTitle) vTitle.textContent = 'MinBiladi Film';
+      document.title = 'MinBiladi Film - MinBiladi';
+    });
+
+  /* ── Play: inject YouTube iframe ── */
   function startVideo(e) {
     if (e) e.stopPropagation();
-    var src = YT_EMBED + videoId + '?autoplay=1&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1';
+
+    var src = YT_EMBED + videoId
+      + '?autoplay=1&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1';
+
     var iframe = document.createElement('iframe');
     iframe.src             = src;
     iframe.allow           = 'autoplay; fullscreen; picture-in-picture; encrypted-media';
     iframe.allowFullscreen = true;
     iframe.style.cssText   = 'position:absolute;inset:0;width:100%;height:100%;border:none;';
+
     ytWrap.innerHTML = '';
     ytWrap.appendChild(iframe);
     ytWrap.style.display = 'block';
+
     if (splash) splash.classList.add('hidden');
   }
 
   if (splashPlay) splashPlay.addEventListener('click', startVideo);
   if (splash)     splash.addEventListener('click', startVideo);
 
+  /* ── Like ── */
   if (btnLike) {
     btnLike.addEventListener('click', function() {
       liked = !liked;
@@ -69,6 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
+  /* ── Share ── */
   if (btnShare) {
     btnShare.addEventListener('click', function(e) {
       e.stopPropagation();
@@ -93,6 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
+  /* ── Save ── */
   if (btnSave) {
     btnSave.addEventListener('click', function() {
       saved = !saved;
@@ -100,6 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
+  /* ── Follow ── */
   if (btnFollow) {
     btnFollow.addEventListener('click', function() {
       following = !following;
@@ -108,6 +151,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
+  /* ── Cursor ── */
   var cursor = document.getElementById('cursor');
   if (cursor) {
     document.addEventListener('mousemove', function(e) {
