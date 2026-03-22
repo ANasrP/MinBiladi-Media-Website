@@ -84,8 +84,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     var iframe = document.createElement('iframe');
     iframe.src             = src;
-    iframe.allow           = 'autoplay; fullscreen; picture-in-picture; encrypted-media';
-    iframe.allowFullscreen = true;
+    iframe.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture; encrypted-media');
+    iframe.setAttribute('allowfullscreen', '');
+    
     iframe.style.cssText   = 'position:absolute;inset:0;width:100%;height:100%;border:none;';
 
     ytWrap.innerHTML = '';
