@@ -1,4 +1,123 @@
-document.addEventListener('DOMContentLoaded',()=>{const params=new URLSearchParams(window.location.search);const videoId=params.get('v')||'k4cwKIw6Rtw';const splash=document.getElementById('playerSplash');const splashPlay=document.getElementById('splashPlay');const splashThumb=document.getElementById('splashThumb');const ytWrap=document.getElementById('ytWrap');const vTitle=document.getElementById('vTitle');const btnYT=document.getElementById('btnYT');const btnLike=document.getElementById('btnLike');const likeNum=document.getElementById('likeNum');const btnShare=document.getElementById('btnShare');const sharePanel=document.getElementById('sharePanel');const btnSave=document.getElementById('btnSave');const btnFollow=document.getElementById('btnFollow');const soCopy=document.getElementById('soCopy');let liked=false,saved=false,following=false;const videos={'k4cwKIw6Rtw':{title:'Mustafah Abdulaziz: Water',cat:'Photography · Documentary'},'RiySkOdQESU':{title:"Mo's Media Film",cat:'Film'},'W1g76TmHDBg':{title:"Mo's Media Film",cat:'Art · Culture'},'pEf3VdtrotA':{title:"Mo's Media Film",cat:'Fashion · Beauty'},};const info=videos[videoId]||{title:"Mo's Media Film",cat:'Film'};if(splashThumb){splashThumb.src=`https:splashThumb.onerror=()=>splashThumb.src=`https:}
-if(vTitle)vTitle.textContent=info.title;if(btnYT)btnYT.href=`https:document.title=info.title+" — Mo's Media";function startVideo(e){if(e)e.stopPropagation();const embedURL=`https:`?autoplay=1&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1&color=white`;const iframe=document.createElement('iframe');iframe.src=embedURL;iframe.allow='autoplay; fullscreen; picture-in-picture; encrypted-media';iframe.allowFullscreen=true;iframe.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:none;';ytWrap.innerHTML='';ytWrap.appendChild(iframe);ytWrap.style.display='block';splash?.classList.add('hidden');}
-splashPlay?.addEventListener('click',startVideo);splash?.addEventListener('click',startVideo);btnLike?.addEventListener('click',()=>{liked=!liked;btnLike.classList.toggle('liked',liked);const raw=parseFloat(likeNum.textContent)*(likeNum.textContent.includes('K')?1000:1);const n=Math.round(raw)+(liked?1:-1);likeNum.textContent=n>=1000?(n/1000).toFixed(1)+'K':n;});btnShare?.addEventListener('click',e=>{e.stopPropagation();sharePanel?.classList.toggle('open');});document.addEventListener('click',e=>{if(!btnShare?.contains(e.target)&&!sharePanel?.contains(e.target))
-sharePanel?.classList.remove('open');});soCopy?.addEventListener('click',()=>{navigator.clipboard?.writeText(location.href).then(()=>{const orig=soCopy.innerHTML;soCopy.textContent='✓ Copied!';setTimeout(()=>soCopy.innerHTML=orig,2000);});});btnSave?.addEventListener('click',()=>{saved=!saved;btnSave.classList.toggle('saved',saved);});btnFollow?.addEventListener('click',()=>{following=!following;btnFollow.textContent=following?'✓ Following':'+ Follow';btnFollow.classList.toggle('following',following);});const cursor=document.getElementById('cursor');document.addEventListener('mousemove',e=>{cursor.style.left=e.clientX+'px';cursor.style.top=e.clientY+'px';});document.querySelectorAll('a, button, .rcard, .vtag, .player-splash').forEach(el=>{el.addEventListener('mouseenter',()=>cursor.classList.add('grow'));el.addEventListener('mouseleave',()=>cursor.classList.remove('grow'));});});
+/* Mo's Media - video.js */
+document.addEventListener('DOMContentLoaded', function() {
+
+  var params  = new URLSearchParams(window.location.search);
+  var videoId = params.get('v') || 'k4cwKIw6Rtw';
+
+  var splash      = document.getElementById('playerSplash');
+  var splashPlay  = document.getElementById('splashPlay');
+  var splashThumb = document.getElementById('splashThumb');
+  var ytWrap      = document.getElementById('ytWrap');
+  var vTitle      = document.getElementById('vTitle');
+  var btnYT       = document.getElementById('btnYT');
+  var btnLike     = document.getElementById('btnLike');
+  var likeNum     = document.getElementById('likeNum');
+  var btnShare    = document.getElementById('btnShare');
+  var sharePanel  = document.getElementById('sharePanel');
+  var btnSave     = document.getElementById('btnSave');
+  var btnFollow   = document.getElementById('btnFollow');
+  var soCopy      = document.getElementById('soCopy');
+  var liked = false, saved = false, following = false;
+
+  var videos = {
+    'k4cwKIw6Rtw': { title: 'Mustafah Abdulaziz: Water' },
+    'RiySkOdQESU': { title: "Mo's Media Film" },
+    'W1g76TmHDBg': { title: "Mo's Media Film" },
+    'pEf3VdtrotA': { title: "Mo's Media Film" }
+  };
+  var info = videos[videoId] || { title: "Mo's Media Film" };
+
+  var YT_THUMB = 'https://img.youtube.com/vi/';
+  var YT_EMBED = 'https://www.youtube.com/embed/';
+  var YT_WATCH = 'https://www.youtube.com/watch?v=';
+
+  if (splashThumb) {
+    splashThumb.src = YT_THUMB + videoId + '/maxresdefault.jpg';
+    splashThumb.onerror = function() {
+      splashThumb.src = YT_THUMB + videoId + '/hqdefault.jpg';
+    };
+  }
+
+  if (vTitle) vTitle.textContent = info.title;
+  if (btnYT)  btnYT.href = YT_WATCH + videoId;
+  document.title = info.title + " - Mo's Media";
+
+  function startVideo(e) {
+    if (e) e.stopPropagation();
+    var src = YT_EMBED + videoId + '?autoplay=1&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1';
+    var iframe = document.createElement('iframe');
+    iframe.src             = src;
+    iframe.allow           = 'autoplay; fullscreen; picture-in-picture; encrypted-media';
+    iframe.allowFullscreen = true;
+    iframe.style.cssText   = 'position:absolute;inset:0;width:100%;height:100%;border:none;';
+    ytWrap.innerHTML = '';
+    ytWrap.appendChild(iframe);
+    ytWrap.style.display = 'block';
+    if (splash) splash.classList.add('hidden');
+  }
+
+  if (splashPlay) splashPlay.addEventListener('click', startVideo);
+  if (splash)     splash.addEventListener('click', startVideo);
+
+  if (btnLike) {
+    btnLike.addEventListener('click', function() {
+      liked = !liked;
+      btnLike.classList.toggle('liked', liked);
+      var raw = parseFloat(likeNum.textContent) * (likeNum.textContent.indexOf('K') > -1 ? 1000 : 1);
+      var n = Math.round(raw) + (liked ? 1 : -1);
+      likeNum.textContent = n >= 1000 ? (n / 1000).toFixed(1) + 'K' : n;
+    });
+  }
+
+  if (btnShare) {
+    btnShare.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (sharePanel) sharePanel.classList.toggle('open');
+    });
+  }
+  document.addEventListener('click', function(e) {
+    if (sharePanel && btnShare && !btnShare.contains(e.target) && !sharePanel.contains(e.target)) {
+      sharePanel.classList.remove('open');
+    }
+  });
+
+  if (soCopy) {
+    soCopy.addEventListener('click', function() {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(location.href).then(function() {
+          var orig = soCopy.innerHTML;
+          soCopy.textContent = 'Copied!';
+          setTimeout(function() { soCopy.innerHTML = orig; }, 2000);
+        });
+      }
+    });
+  }
+
+  if (btnSave) {
+    btnSave.addEventListener('click', function() {
+      saved = !saved;
+      btnSave.classList.toggle('saved', saved);
+    });
+  }
+
+  if (btnFollow) {
+    btnFollow.addEventListener('click', function() {
+      following = !following;
+      btnFollow.textContent = following ? 'Following' : '+ Follow';
+      btnFollow.classList.toggle('following', following);
+    });
+  }
+
+  var cursor = document.getElementById('cursor');
+  if (cursor) {
+    document.addEventListener('mousemove', function(e) {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top  = e.clientY + 'px';
+    });
+    document.querySelectorAll('a,button,.rcard,.vtag,.player-splash').forEach(function(el) {
+      el.addEventListener('mouseenter', function() { cursor.classList.add('grow'); });
+      el.addEventListener('mouseleave', function() { cursor.classList.remove('grow'); });
+    });
+  }
+
+});
